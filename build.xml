@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project default="build" name="selenium_recorder">
+
+	<!--define variables-->
+	<property name="debug" value="false" />
+	<property name="optimize" value="false" />
+	
+	<property name="version" value="1.0" />
+	<property name="lib.dir" value="./lib" />
+	<property name="src.dir" value="./src" />
+	<property name="dest.dir" value="./bin" />
+	<property name="dest.jar" value="./selenium-recorder-${version}.jar" />
+
+	<!--delete classes already compiled-->
+	<target name="clear" description="delete classes already compiled">
+		<delete includeemptydirs="true">
+			<fileset dir="${dest.dir}" />
+			<include name="**/*" />
+			<exclude name=".svn" />
+		</delete>
+		<mkdir dir="${dest.dir}" />
+	</target>
+
+	<!--compile the source files-->
+	<path id="compile.cp">
+		<fileset dir="${lib.dir}">
+			<include name="*.jar" />
+		</fileset>
+	</path>
+
+	<target name="compile" description="compile the source files">
+		<javac debug="false"
+			source="1.7"
+			encoding="UTF-8"
+			classpathref="compile.cp"
+			srcdir="${src.dir}"
+			destdir="${dest.dir}"
+			includeantruntime="on" />
+	</target>
+
+	<!--create runable jar for selenium_recorder-->
+	<target name="package" description="create runable jar for selenium_recorder">
+		<jar destfile="${dest.jar}">
+			<manifest>
+				<attribute name="Main-Class" value="com.star.recorder.SeleniumRecorder" />
+				<attribute name="Class-Path" value=". lib/log4j-1.2.8.jar lib/dom4j-1.6.1.jar lib/orion-ssh2-214.jar lib/commons-for-selenium.jar lib/selenium-standalone-2.40.0.jar" />
+			</manifest>
+			<fileset dir="${dest.dir}" />
+		</jar>
+	</target>
+
+	<!--ant build the project-->
+	<target name="build">
+		<sequential>
+			<antcall target="clear" />
+			<antcall target="compile" />
+			<antcall target="package" />
+		</sequential>
+	</target>
+</project>

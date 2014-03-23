@@ -1,0 +1,14 @@
+You can put some texts here if you need to use them frequently
+Also, you can put them to this file: ./config/form_anounce
+The program will automaticly read the texts to this window too 
+For example, you test google or baidu websites, you can put its address here
+
+address:
+	http://www.google.com.hk/
+	http://www.baidu.com/
+	
+search for: 
+	A tool named selenium_recorder and a shout animal named @槽神刘叫兽 on weibo.com
+	
+verify results:
+	the shout animal is the most handsome man among all the testers
