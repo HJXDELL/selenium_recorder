@@ -15,6 +15,8 @@ public class FormSettings {
 	public final int FORM_HIGHTH = Integer.valueOf(config.get("form.highth"));
 	public final boolean KEEP_ON_TOP = Boolean.parseBoolean(config.get("form.keep_on_top"));
 	public final boolean RESIZABLE = Boolean.parseBoolean(config.get("form.resizable"));
+	public final Color editBack = new Color(200, 230, 200);
+	public final Color editFront = Color.darkGray;
 
 	public FormSettings() {
 		if (FORM_HIGHTH < 550) {

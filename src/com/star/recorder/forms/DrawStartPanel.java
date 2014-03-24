@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
+import java.awt.SystemColor;
 import java.awt.event.ItemListener;
 import java.awt.event.MouseListener;
 
@@ -12,15 +13,17 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
 
 import com.star.recorder.config.ConfigurationSupport;
 
 public class DrawStartPanel {
 	private final String rootFolder = System.getProperty("user.dir");
-	private final String _user_anounce_file = rootFolder + "/config/form_anounces";
+	private final String anounceFile = rootFolder + "/config/form_anounces";
 	private final FormSettings FORM = new FormSettings();
 	private JPanel startPanel;
 	private JTextField urlEdit;
@@ -39,13 +42,19 @@ public class DrawStartPanel {
 		label.setPreferredSize(new Dimension(FORM.TEXT_AREA_WIDTH, (int) label.getPreferredSize().getHeight()));
 
 		JTextArea userAnounce = new JTextArea();
-		userAnounce.setPreferredSize(new Dimension(FORM.TEXT_AREA_WIDTH,
-				(FORM.FORM_HIGHTH - FORM.GAP_HIGHTH * 5) * 2 / 3));
+		userAnounce.setLineWrap(true);
+		userAnounce.setWrapStyleWord(true);
+		userAnounce.setBackground(FORM.editBack);
+		userAnounce.setForeground(FORM.editFront);
 
-		new ConfigurationSupport().fillStringToForms(userAnounce, _user_anounce_file); // 将常用的地址等用户所需信息记录在主窗体中
+		new ConfigurationSupport().fillStringToForms(userAnounce, anounceFile); // 将常用的地址等用户所需信息记录在主窗体中
 
 		userAnounce.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
 		userAnounce.setFont(FORM.TEXT_NORMAL_FONT);
+
+		JScrollPane scroller = new JScrollPane(userAnounce);
+		scroller.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
+		scroller.setPreferredSize(new Dimension(FORM.TEXT_AREA_WIDTH, (FORM.FORM_HIGHTH - FORM.GAP_HIGHTH * 5) * 2 / 3));
 
 		JLabel urlLabel = new JLabel("Url Of The Web Application: ", SwingUtilities.RIGHT);
 		urlLabel.setFont(FORM.TEXT_NORMAL_FONT);
@@ -58,6 +67,10 @@ public class DrawStartPanel {
 
 		urlEdit = new JTextField(FORM.TEXT_AREA_WIDTH / 10);
 		codeStyle = new JComboBox();
+		urlEdit.setBackground(FORM.editBack);
+		urlEdit.setForeground(FORM.editFront);
+		codeStyle.setBackground(FORM.editBack);
+		codeStyle.setForeground(FORM.editFront);
 		codeStyle.addItemListener(itemListener);
 		String[] codeStyles = FORM.CODE_STYLES.split(",");
 		for (int i = 0; i < codeStyles.length; i++) {
@@ -80,7 +93,7 @@ public class DrawStartPanel {
 		startButton.setFont(FORM.getButtonFont());
 
 		startPanel.add(label);
-		startPanel.add(userAnounce);
+		startPanel.add(scroller);
 		startPanel.add(userPanel);
 		startPanel.add(startButton);
 		startPanel.setLayout(new GridLayout(3, 1));

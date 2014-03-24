@@ -11,7 +11,8 @@ public enum WebElements {
 			+ "s = s + '#%#tagName$$$' + element.tagName;s = s + '#%#className$$$' + element.className;"
 			+ "s = s + '#%#linkText$$$' + element.innerText;s = s + '#%#href$$$' + element.getAttribute('href');"
 			+ "s = s + '#%#onclick$$$' + element.getAttribute('onclick');s = s + '#%#type$$$' + element.getAttribute('type');"
-			+ "s = s + '#%#src$$$' + element.getAttribute('src');return s;"),
+			+ "s = s + '#%#src$$$' + element.getAttribute('src');"
+			+ "s = s + '#%#value$$$' + element.getAttribute('value');return s;"),
 
 	ELEMENT_XPATH(";var element = document.elementFromPoint(offX, offY);"
 			+ "getXPath=function(node){if (node.id !== ''){return '//' + "

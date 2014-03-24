@@ -15,8 +15,8 @@ import com.star.recorder.tools.LoggingManager;
 
 public class RunCurrentStep {
 	private final LoggingManager LOG = new LoggingManager(this.getClass().getName());
-	private JComboBox<?> operator;
-	private JComboBox<?> findBy;
+	private JComboBox operator;
+	private JComboBox findBy;
 	private JTextField id;
 	private JTextField name;
 	private JTextField xpath;
@@ -27,7 +27,7 @@ public class RunCurrentStep {
 	private WebDriver driver;
 	private By by;
 
-	public void setFinder(JComboBox<?> findBy) {
+	public void setFinder(JComboBox findBy) {
 		String byWay = findBy.getSelectedItem().toString();
 		if (byWay.equalsIgnoreCase("id")) {
 			by = By.id(id.getText());
@@ -93,11 +93,11 @@ public class RunCurrentStep {
 		this.by = by;
 	}
 
-	public void setOperator(JComboBox<?> operator) {
+	public void setOperator(JComboBox operator) {
 		this.operator = operator;
 	}
 
-	public void setFindBy(JComboBox<?> findBy) {
+	public void setFindBy(JComboBox findBy) {
 		this.findBy = findBy;
 	}
 

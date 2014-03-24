@@ -59,7 +59,7 @@ public class ScriptParser {
 		return codeMap;
 	}
 
-	public void setSuitableOperator(JComboBox<?> operator, LinkedHashMap<String, String> attributeMap) {
+	public void setSuitableOperator(JComboBox operator, LinkedHashMap<String, String> attributeMap) {
 		String tagName = attributeMap.get("tagName").toLowerCase();
 		String tagType = attributeMap.get("type").toLowerCase();
 		if (tagName.equals("input")) {
@@ -85,7 +85,7 @@ public class ScriptParser {
 		}
 	}
 
-	public void setSuitableBy(JComboBox<?> findBy, LinkedHashMap<String, String> elementAtrs) {
+	public void setSuitableBy(JComboBox findBy, LinkedHashMap<String, String> elementAtrs) {
 		if (elementAtrs.get("id") != null && elementAtrs.get("id").length() > 0
 				&& !elementAtrs.get("id").equalsIgnoreCase("null")
 				&& !elementAtrs.get("id").equalsIgnoreCase("undefined")) {

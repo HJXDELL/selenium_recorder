@@ -38,11 +38,13 @@ public class DrawScriptsPanel implements ClipboardOwner{
 		JButton copyButton = new JButton("Copy To Clipboard");
 		int btnHighth = (int) copyButton.getPreferredSize().getHeight();
 		scriptArea = new JTextArea();
-		scriptArea.setPreferredSize(new Dimension(FORM.TEXT_AREA_WIDTH, FORM.FORM_HIGHTH - FORM.getBigTextSize() * 4
-				- FORM.GAP_HIGHTH * 5 - btnHighth));
+		scriptArea.setBackground(FORM.editBack);
+		scriptArea.setForeground(FORM.editFront);
 		scriptArea.setBorder(BorderFactory.createLineBorder(Color.BLACK, 0));
 
 		JScrollPane scroller = new JScrollPane(scriptArea);
+		scroller.setPreferredSize(new Dimension(FORM.TEXT_AREA_WIDTH, FORM.FORM_HIGHTH - FORM.getBigTextSize() * 4
+				- FORM.GAP_HIGHTH * 5 - btnHighth));
 		scroller.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
 		scroller.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		stepsViewPanel.add(scroller);

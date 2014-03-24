@@ -52,6 +52,7 @@ public class RecorderPerformer {
 	private JComboBox findBy;
 
 	private JTextField currentWindow;
+	private JTextField currentURL;
 	private JTextField id;
 	private JTextField name;
 	private JTextField tagName;
@@ -60,6 +61,7 @@ public class RecorderPerformer {
 	private JTextField text;
 	private JTextField onclick;
 	private JTextField href;
+	private JTextField value;
 	private JTextField dataValue;
 
 	private JTextArea stepArea;
@@ -126,6 +128,7 @@ public class RecorderPerformer {
 		recordPanel = record.getRecordPanel();
 
 		currentWindow = record.getCurrentWindow();
+		currentURL = record.getCurrentURL();
 		id = record.getId();
 		name = record.getName();
 		xpath = record.getXpath();
@@ -133,6 +136,7 @@ public class RecorderPerformer {
 		onclick = record.getOnclick();
 		text = record.getText();
 		href = record.getHref();
+		value = record.getValue();
 		tagName = record.getTagName();
 		dataValue = record.getDataValue();
 
@@ -235,9 +239,13 @@ public class RecorderPerformer {
 			name.setText(attributeMap.get("name"));
 			tagName.setText(attributeMap.get("tagName"));
 			className.setText(attributeMap.get("className"));
-			text.setText(attributeMap.get("text"));
+			text.setText(attributeMap.get("linkText"));
 			href.setText(attributeMap.get("href"));
 			onclick.setText(attributeMap.get("onclick"));
+			value.setText(attributeMap.get("value"));
+			
+			currentWindow.setText(driver.getTitle());
+			currentURL.setText(driver.getCurrentUrl());
 
 			String elementXpath = (String) (js.executeScript(WebElements.SCREEN_LOCATOR.getValue()
 					+ scrollLeft + WebElements.SCREEEN_OFFSET.getValue() + scrollTop

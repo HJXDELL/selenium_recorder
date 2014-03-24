@@ -133,16 +133,38 @@ public class DrawRecordPanel {
 		attrPanel.setLayout(new GridLayout(11, 1));
 
 		currentWindow = new JTextField((FORM.TEXT_AREA_WIDTH) / 9);
+		currentWindow.setBackground(FORM.editBack);
+		currentWindow.setForeground(FORM.editFront);
 		id = new JTextField((FORM.TEXT_AREA_WIDTH) / 9);
+		id.setBackground(FORM.editBack);
+		id.setForeground(FORM.editFront);
 		name = new JTextField((FORM.TEXT_AREA_WIDTH) / 9);
+		name.setBackground(FORM.editBack);
+		name.setForeground(FORM.editFront);
 		xpath = new JTextField((FORM.TEXT_AREA_WIDTH) / 9);
+		xpath.setBackground(FORM.editBack);
+		xpath.setForeground(FORM.editFront);
 		className = new JTextField((FORM.TEXT_AREA_WIDTH) / 9);
+		className.setBackground(FORM.editBack);
+		className.setForeground(FORM.editFront);
 		onclick = new JTextField((FORM.TEXT_AREA_WIDTH) / 9);
+		onclick.setBackground(FORM.editBack);
+		onclick.setForeground(FORM.editFront);
 		text = new JTextField((FORM.TEXT_AREA_WIDTH) / 9);
+		text.setBackground(FORM.editBack);
+		text.setForeground(FORM.editFront);
 		value = new JTextField((FORM.TEXT_AREA_WIDTH) / 9);
+		value.setBackground(FORM.editBack);
+		value.setForeground(FORM.editFront);
 		href = new JTextField((FORM.TEXT_AREA_WIDTH) / 9);
+		href.setBackground(FORM.editBack);
+		href.setForeground(FORM.editFront);
 		tagName = new JTextField((FORM.TEXT_AREA_WIDTH) / 9);
+		tagName.setBackground(FORM.editBack);
+		tagName.setForeground(FORM.editFront);
 		currentURL = new JTextField((FORM.TEXT_AREA_WIDTH) / 9);
+		currentURL.setBackground(FORM.editBack);
+		currentURL.setForeground(FORM.editFront);
 
 		currentWindow.setFont(FORM.TEXT_NORMAL_FONT);
 		id.setFont(FORM.TEXT_NORMAL_FONT);
@@ -204,6 +226,8 @@ public class DrawRecordPanel {
 		userLabelPanel.add(operLabel);
 
 		dataValue = new JTextField((FORM.TEXT_AREA_WIDTH) / 9);
+		dataValue.setBackground(new Color(200, 230, 200));
+		dataValue.setForeground(FORM.editFront);
 		dataValue.setFont(FORM.TEXT_NORMAL_FONT);
 		dataValue.getDocument().addDocumentListener(documentListener);
 
@@ -211,10 +235,14 @@ public class DrawRecordPanel {
 		choicePanel.setLayout(new GridLayout(1, 2));
 
 		operator = new JComboBox();
+		operator.setBackground(FORM.editBack);
+		operator.setForeground(FORM.editFront);
 		setCodeStyle(parser.getCodeMap().keySet());
 		operator.addItemListener(operatorChangedListener);
 		
 		findBy = new JComboBox();
+		findBy.setBackground(FORM.editBack);
+		findBy.setForeground(FORM.editFront);
 		findBy.addItem("id");
 		findBy.addItem("name");
 		findBy.addItem("xpath");
@@ -236,9 +264,11 @@ public class DrawRecordPanel {
 
 		JPanel tAreaPanel = new JPanel();
 		stepArea = new JTextArea();
+		stepArea.setBackground(FORM.editBack);
+		stepArea.setForeground(FORM.editFront);
 		stepArea.setBorder(BorderFactory.createLineBorder(Color.BLACK, 0));
-		stepArea.setPreferredSize(new Dimension(FORM.TEXT_AREA_WIDTH, FORM.FORM_HIGHTH / 10));
 		JScrollPane scroller = new JScrollPane(stepArea);
+		scroller.setPreferredSize(new Dimension(FORM.TEXT_AREA_WIDTH, FORM.FORM_HIGHTH / 10));
 		scroller.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
 		scroller.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		tAreaPanel.add(scroller);
