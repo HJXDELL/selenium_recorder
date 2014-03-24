@@ -13,12 +13,13 @@
 
 	<!--delete classes already compiled-->
 	<target name="clear" description="delete classes already compiled">
+		<mkdir dir="${dest.dir}" />
 		<delete includeemptydirs="true">
 			<fileset dir="${dest.dir}" />
 			<include name="**/*" />
 			<exclude name=".svn" />
+			<exclude name=".git" />
 		</delete>
-		<mkdir dir="${dest.dir}" />
 	</target>
 
 	<!--compile the source files-->
@@ -29,6 +30,7 @@
 	</path>
 
 	<target name="compile" description="compile the source files">
+		<mkdir dir="${dest.dir}" />
 		<javac debug="false"
 			source="1.7"
 			encoding="UTF-8"
@@ -47,6 +49,12 @@
 			</manifest>
 			<fileset dir="${dest.dir}" />
 		</jar>
+		<delete includeemptydirs="true">
+			<fileset dir="${dest.dir}" />
+			<include name="**/*" />
+			<exclude name=".svn" />
+			<exclude name=".git" />
+		</delete>
 	</target>
 
 	<!--ant build the project-->

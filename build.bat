@@ -1,3 +1,3 @@
 D:
-cd D:\Work\selenium_recorder
+D:\Work\git\selenium_recorder
 ant build -buildfile build.xml
