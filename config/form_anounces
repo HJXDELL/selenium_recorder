@@ -1,14 +1,15 @@
 声明：
-    首先，这是个录制工具，但作者并不鼓励在当前的工具建模水平下完全采用录制、回放的自动化。
+    这是个录制工具，但作者并不鼓励在当前的工具建模水平下完全采用录制、回放的自动化。
     
-    其次，请不要苛责工具的功能，IE需要[F12]、Chrome需要[审查元素]……而这玩意则可以通过拖拽来解析大部分Web控件对象的属性信息。
+    ie需要[F12]、chrome需要[审查元素]，firefox需要[查看元素]，而这个工具则需要通过拖拽来解析以上三种浏览器中的对象属性和生成测试脚本，操作便利性皆有不足，请不要妄加对比。
     
-    最后，这是一个记录你常用文本信息的地方，比如应用的登录地址、操作用户、调试数据甚至明文密码，这样你可以在录制或测试你的应用的时候快速找到你所需要的相关内容。这个窗口的内容可以自由修改，也可以通过修改[./config/form_anounces]这个文件再重启工具来实现。
+    工具开源地址：https://github.com/fudax/selenium_recorder，欢迎自主优化并反馈给 @槽神刘叫兽，谢谢。
+    
+    其实，这是一个记录你常用文本信息的地方，比如登录地址、操作用户、调试数据等等，这个窗口的内容可以自由修改，也可以预定义文件 [./config/form_anounces] 的内容，之后重新打开录制工具。
 		
 自测数据：
-	http://www.google.com.hk/
-	http://www.baidu.com/	
+    http://www.google.com.hk/
+    http://www.baidu.com/	
 	
-	search for: @槽神刘叫兽	
-	
-	verify results:	the shout animal is the most handsome man among the SQA testers！
+    搜索：@槽神刘叫兽	
+    校验：叫兽嘛，就是会叫的野兽而已~
