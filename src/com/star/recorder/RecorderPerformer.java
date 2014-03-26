@@ -1,8 +1,7 @@
 package com.star.recorder;
 
-import java.util.Set;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.Set;
 import java.awt.Point;
 import java.awt.MouseInfo;
 import java.awt.event.ItemEvent;
@@ -34,6 +33,7 @@ import com.star.recorder.forms.DrawStartPanel;
 import com.star.recorder.forms.FormSettings;
 import com.star.recorder.rules.ScriptParser;
 import com.star.recorder.test.RunCurrentStep;
+import com.star.recorder.tools.StringBufferUtils;
 
 public class RecorderPerformer {
 	private WebDriver driver;
@@ -51,7 +51,7 @@ public class RecorderPerformer {
 	private JComboBox operator;
 	private JComboBox findBy;
 
-	private JTextField currentWindow;
+	private JComboBox windows;
 	private JTextField currentURL;
 	private JTextField id;
 	private JTextField name;
@@ -68,8 +68,13 @@ public class RecorderPerformer {
 	private JTextArea scriptArea;
 
 	private ScriptParser parser;
+	private Set<String> operKeys;
 
 	private final FormSettings FORM = new FormSettings();
+	private final RunCurrentStep run = new RunCurrentStep();
+	private final StringBufferUtils str = new StringBufferUtils();
+	private final String splitChar = " - ";
+	private final String selectWindow = "selectWindow";
 	private LinkedHashMap<String, String> attrMap = new LinkedHashMap<String, String>();
 	private LinkedHashMap<String, String> jsMap;
 	private LinkedHashMap<String, By> frameMap = new LinkedHashMap<String, By>();
@@ -78,6 +83,7 @@ public class RecorderPerformer {
 	private LinkedHashMap<String, String> attributeMap = new LinkedHashMap<String, String>();
 	private final static int MaxFrameLevel = 10;
 	private LinkedHashMap<String, JPanel> panelMap;
+	private String currentStyle;
 	private int frameLevel = 0;
 	private int oldFrameLevel = 0;
 	private By currentFrame;
@@ -104,7 +110,7 @@ public class RecorderPerformer {
 		panelMap = new LinkedHashMap<String, JPanel>();
 
 		initJSMap();
-
+		
 		start.setMouseListener(new StartUrlMouseListener());
 		start.setItemListener(new CodeStyleChangedListener());
 		start.drawStartPanel();
@@ -118,8 +124,10 @@ public class RecorderPerformer {
 		record.setOperatorChangedListener(new ItemChangedListener());
 		record.setFindByChangedListener(new ItemChangedListener());
 		record.setDocumentListener(new DataValueInputListener());
-
-		parser = new ScriptParser(codeStyle.getSelectedItem().toString());
+		
+		currentStyle = codeStyle.getSelectedItem().toString();
+		parser = new ScriptParser(currentStyle);
+		operKeys = parser.getCodeMap().keySet();
 		record.setParser(parser);
 		record.drawRecordPanel();
 		operator = record.getOperator();
@@ -127,7 +135,7 @@ public class RecorderPerformer {
 		findBy = record.getFindBy();
 		recordPanel = record.getRecordPanel();
 
-		currentWindow = record.getCurrentWindow();
+		windows = record.getWindows();
 		currentURL = record.getCurrentURL();
 		id = record.getId();
 		name = record.getName();
@@ -168,46 +176,48 @@ public class RecorderPerformer {
 		attrMap.put("tagName", tagName.getText());
 
 		if (oldFrameLevel > frameLevel) {
-			selectFrame = selectFrame + "driver.switchTo.defaultContent();";
+			selectFrame += "driver.switchTo.defaultContent();";
 			for (int i = 1; i < frameLevel + 1; i++) {
 				if (!frameList.get("" + i).get("id").isEmpty()) {
-					selectFrame = selectFrame + "\nselectFrame(\"" + frameList.get("" + i).get("id") + "\");";
+					selectFrame += "\nselectFrame(\"" + frameList.get("" + i).get("id") + "\");";
 				} else if (!frameList.get("" + i).get("name").isEmpty()) {
-					selectFrame = selectFrame + "\nselectFrame(\"" + frameList.get("" + i).get("name")
-							+ "\");";
-				} else if (!frameList.get("" + i).get("className").isEmpty()) {
-					selectFrame = selectFrame + "\nselectFrame(By.className(\""
-							+ frameList.get("" + i).get("className") + "\"));";
+					selectFrame += "\nselectFrame(\"" + frameList.get("" + i).get("name") + "\");";
 				} else {
-					selectFrame = selectFrame + "\nselectFrame(By.xpath(\""
-							+ frameList.get("" + i).get("xpath") + "\"));";
+					selectFrame += "\nselectFrame(By.xpath(\"" + frameList.get("" + i).get("xpath") + "\"));";
 				}
 			}
-			selectFrame = selectFrame + "\n";
+			selectFrame += "\n";
 		} else if (oldFrameLevel < frameLevel) {
 			for (int i = oldFrameLevel + 1; i < frameLevel + 1; i++) {
 				if (!frameList.get("" + i).get("id").isEmpty()) {
-					selectFrame = selectFrame + "\nselectFrame(\"" + frameList.get("" + i).get("id") + "\");";
+					selectFrame += "\nselectFrame(\"" + frameList.get("" + i).get("id") + "\");";
 				} else if (!frameList.get("" + i).get("name").isEmpty()) {
-					selectFrame = selectFrame + "\nselectFrame(\"" + frameList.get("" + i).get("name")
-							+ "\");";
-				} else if (!frameList.get("" + i).get("className").isEmpty()) {
-					selectFrame = selectFrame + "\nselectFrame(By.className(\""
-							+ frameList.get("" + i).get("className") + "\"));";
+					selectFrame += "\nselectFrame(\"" + frameList.get("" + i).get("name") + "\");";
 				} else {
-					selectFrame = selectFrame + "\nselectFrame(By.xpath(\""
-							+ frameList.get("" + i).get("xpath") + "\"));";
+					selectFrame += "\nselectFrame(By.xpath(\"" + frameList.get("" + i).get("xpath") + "\"));";
 				}
 			}
-			selectFrame = selectFrame + "\n";
+			selectFrame += "\n";
 		}
 
 		String dataText = dataValue.getText();
 		if (dataText == null || dataText == "" || dataText.isEmpty()) {
 			dataText = "value to be changed";
 		}
-		currentScript = selectFrame
-				+ parser.getCurrentStep(operation, new Object[] { byWay, attrMap.get(byWay), dataText });
+		
+		if (driver != null) {
+			String[] winAttr = windows.getSelectedItem().toString().split(splitChar);
+			String param = currentStyle.toLowerCase().contains("bot") ? winAttr[1] : winAttr[2];
+
+			currentScript = operation.equalsIgnoreCase(selectWindow) ? (parser.getCurrentStep(operation,
+					new Object[] { param })) : (selectFrame + parser.getCurrentStep(operation, new Object[] { byWay,
+					attrMap.get(byWay), dataText }));
+
+		} else {
+			currentScript = selectFrame
+					+ parser.getCurrentStep(operation, new Object[] { byWay, attrMap.get(byWay), dataText });
+		}
+
 		stepArea.setText(currentScript);
 		attrMap.clear();
 	}
@@ -243,8 +253,6 @@ public class RecorderPerformer {
 			href.setText(attributeMap.get("href"));
 			onclick.setText(attributeMap.get("onclick"));
 			value.setText(attributeMap.get("value"));
-			
-			currentWindow.setText(driver.getTitle());
 			currentURL.setText(driver.getCurrentUrl());
 
 			String elementXpath = (String) (js.executeScript(WebElements.SCREEN_LOCATOR.getValue()
@@ -318,7 +326,9 @@ public class RecorderPerformer {
 				if (operator != null){
 					operator.removeAllItems();
 					parser = new ScriptParser(codeStyle.getSelectedItem().toString());
-					record.setCodeStyle(parser.getCodeMap().keySet());
+					operKeys = parser.getCodeMap().keySet();
+					currentStyle = codeStyle.getSelectedItem().toString();
+					record.setOperations(operKeys);
 				}
 			}
 		}
@@ -326,13 +336,20 @@ public class RecorderPerformer {
 	
 	//选择测试对象定位方式、操作方式的监听
 	public class ItemChangedListener implements ItemListener {
-
 		@Override
 		public void itemStateChanged(ItemEvent e) {
 			String currentScript = stepArea.getText().trim();
-			if (e.getStateChange() == ItemEvent.SELECTED && currentScript != null && currentScript != "null"
-					&& !currentScript.isEmpty()) {
-				setCurrentScript();
+			if (e.getStateChange() == ItemEvent.SELECTED) {
+				if (currentScript != null && currentScript != "null" && !currentScript.isEmpty()) {
+					setCurrentScript();
+				} else {
+					if (operator != null) {
+						String operSelected = operator.getSelectedItem().toString();
+						if (str.countStrRepeat(parser.getCodeMap().get(operSelected), "%s") == 0) {
+							setCurrentScript();
+						}
+					}
+				}
 			}
 		}
 	}
@@ -355,7 +372,7 @@ public class RecorderPerformer {
 		@Override
 		public void mouseDragged(MouseEvent arg0) {
 			if (driver == null) {
-				JOptionPane.showMessageDialog(recordPanel, "WebDriver Has Not Been Started, Please Check!");
+				JOptionPane.showMessageDialog(recordPanel, "WebDriver Has Not Been Started !");
 			} else {
 				defineDraggedMouse();				
 				if (operator != null && !attributeMap.isEmpty()){
@@ -365,50 +382,66 @@ public class RecorderPerformer {
 					parser.setSuitableBy(findBy, attributeMap);					
 				}
 				setCurrentScript();
+				run.setDriver(driver);
+				run.setWindows(record);
 			}
 		}
 	}
 
 	// 测试/运行当前步骤按钮的监听
 	public class TestMouseListener implements MouseListener {
-		RunCurrentStep run = new RunCurrentStep();
 		public void mouseClicked(MouseEvent arg0) {}
 		public void mouseEntered(MouseEvent arg0) {}
 		public void mouseExited(MouseEvent arg0) {}
 		public void mouseReleased(MouseEvent arg0) {}
 
 		public void mousePressed(MouseEvent arg0) {
-			run.setDriver(driver);
-			run.setOperator(operator);
-			run.setFindBy(findBy);
-			run.setId(id);
-			run.setName(name);
-			run.setXpath(xpath);
-			run.setText(text);
-			run.setClassName(className);
-			run.setCurrentWindow(currentWindow);
-			run.setDataValue(dataValue);
-			run.runCurrentStep();
+			if (driver == null) {
+				JOptionPane.showMessageDialog(recordPanel, "WebDriver Has Not Been Started !");
+			} else {
+				run.setDriver(driver);
+				run.setOperator(operator);
+				run.setFindBy(findBy);
+				run.setId(id);
+				run.setName(name);
+				run.setXpath(xpath);
+				run.setText(text);
+				run.setClassName(className);
+				run.setWindows(windows);
+				run.setDataValue(dataValue);
+				run.runCurrentStep();
+				run.maximizeAllWindows();
+				run.setWindows(record);
+			}
 		}
 	}
-
+	
 	// 切换到弹出新窗口按钮的监听
 	public class SelectNewWindowMouseListener implements MouseListener {
 		@Override
-		public void mouseClicked(MouseEvent arg0) {
-			String winHandle = driver.getWindowHandle();
-			Set<String> handles = driver.getWindowHandles();
-			handles.remove(winHandle);
-			Iterator<String> it = handles.iterator();
-			while (it.hasNext()) {
-				driver.switchTo().window(it.next());
-			}
-			driver.switchTo().defaultContent();
+		public void mousePressed(MouseEvent arg0) {
+			if (driver == null) {
+				JOptionPane.showMessageDialog(recordPanel, "WebDriver Has Not Been Started !");
+			} else{
+				String[] allWindows = windows.getSelectedItem().toString().split(splitChar);
+				String windowTitle = allWindows[1];
+				String windowHandle = allWindows[2];
+				if (currentStyle.toLowerCase().contains("bot")){
+					stepArea.setText("selectWindow(\"" + windowTitle + "\");");
+				} else{
+					stepArea.setText("driver.switchTo().window(\"" + windowHandle + "\");");
+				}
+				if (!operKeys.contains(selectWindow)){
+					operator.addItem(selectWindow);
+				}
+				driver.switchTo().window(windowHandle);
+				operator.setSelectedItem(selectWindow);				
+			}			
 		}
-
+		
+		public void mouseClicked(MouseEvent arg0) {}
 		public void mouseEntered(MouseEvent arg0) {}
 		public void mouseExited(MouseEvent arg0) {}
-		public void mousePressed(MouseEvent arg0) {}
 		public void mouseReleased(MouseEvent arg0) {}
 	}
 
@@ -422,9 +455,10 @@ public class RecorderPerformer {
 		public void mousePressed(MouseEvent e) {
 			String url = start.getUrlEdit().getText();
 			if (url == null || url == "" || url.isEmpty()) {
-				JOptionPane.showMessageDialog(startPanel, "url can not be empty!");
+				JOptionPane.showMessageDialog(startPanel, "Url Can Not Be Empty !");
 			} else {
 				mainForm.activeTab(recordPanel);
+				operKeys = parser.getCodeMap().keySet();
 			}
 		}
 
@@ -436,20 +470,22 @@ public class RecorderPerformer {
 			if (url != null && url != "" && !url.isEmpty()) {
 				driver.get(url);
 			}
+			run.setDriver(driver);
+			run.setWindows(record);
 		}
 	}
 
 	// 将当前生成的脚本追加到脚本库
 	public class AddToScriptLibMouseListener implements MouseListener {
 		@Override
-		public void mouseClicked(MouseEvent e) {}		
+		public void mouseClicked(MouseEvent e) {}
 		public void mouseEntered(MouseEvent e) {}
 		public void mouseExited(MouseEvent e) {}
 		public void mouseReleased(MouseEvent e) {}
 		
 		public void mousePressed(MouseEvent e) {
 			if (stepArea.getText().trim().isEmpty()) {
-				JOptionPane.showMessageDialog(recordPanel, "Not Scripts In The Step Area!");
+				JOptionPane.showMessageDialog(recordPanel, "Not Scripts In The Step Area !");
 			} else {
 				scriptArea.append(stepArea.getText().trim() + "\n");
 			}			

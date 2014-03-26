@@ -23,6 +23,7 @@ import javax.swing.event.DocumentListener;
 
 import com.star.recorder.rules.ScriptParser;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -32,7 +33,7 @@ public class DrawRecordPanel {
 
 	private JPanel recordPanel;
 
-	private JTextField currentWindow;
+	private JComboBox windows;
 
 	private JTextField currentURL;
 	private JTextField id;
@@ -62,26 +63,17 @@ public class DrawRecordPanel {
 	public void drawRecordPanel() throws Exception {
 		recordPanel = new JPanel();
 
-		JPanel topButtonPanel = new JPanel();
-		topButtonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, FORM.GAP_WIDTH, FORM.GAP_HIGHTH));
-
-		JButton recordButton = new JButton("Record (Drag To Object)");
-		JButton switchButton = new JButton("Switch To New Widnow");
-		Dimension buttonSize = new Dimension(FORM.TEXT_AREA_WIDTH / 4, (int) recordButton.getPreferredSize().getHeight());
-
-		recordButton.addMouseMotionListener(mouseMotionListener);
-		switchButton.addMouseListener(selectNewWindowMouseListener);
-		recordButton.setFont(FORM.getButtonFont());
-		switchButton.setFont(FORM.getButtonFont());
-		recordButton.setPreferredSize(buttonSize);
-		switchButton.setPreferredSize(buttonSize);
-		topButtonPanel.add(recordButton);
-		topButtonPanel.add(switchButton);
-
 		JPanel labelPanel = new JPanel();
 		labelPanel.setLayout(new GridLayout(11, 1));
 
-		JLabel textLabelTitle = new JLabel("title:", SwingUtilities.RIGHT);
+		JButton recordButton = new JButton("Record [Drag To Object]");
+		JButton switchButton = new JButton("Switch To Widnow");
+		JButton testButton = new JButton("Test/Run Current Step");
+		JButton addToSteps = new JButton("Save Current Step");
+		int buttonHighth = (int) recordButton.getPreferredSize().getHeight();
+		Dimension buttonSize = new Dimension(FORM.TEXT_AREA_WIDTH * 196 / 500, buttonHighth);
+
+		JLabel textLabelTitle = new JLabel("windows:", SwingUtilities.RIGHT);
 		JLabel textLabelId = new JLabel("id:", SwingUtilities.RIGHT);
 		JLabel textLabelName = new JLabel("name:", SwingUtilities.RIGHT);
 		JLabel textLabelXpath = new JLabel("xpath:", SwingUtilities.RIGHT);
@@ -93,17 +85,17 @@ public class DrawRecordPanel {
 		JLabel textLabelTagName = new JLabel("tagName:", SwingUtilities.RIGHT);
 		JLabel textLabelUrl = new JLabel("url:", SwingUtilities.RIGHT);
 
-		textLabelTitle.setPreferredSize(new Dimension(FORM.FORM_WIDTH / 10, FORM.TEXT_FIELD_HIGHTH));
-		textLabelId.setPreferredSize(new Dimension(FORM.FORM_WIDTH / 10, FORM.TEXT_FIELD_HIGHTH));
-		textLabelName.setPreferredSize(new Dimension(FORM.FORM_WIDTH / 10, FORM.TEXT_FIELD_HIGHTH));
-		textLabelXpath.setPreferredSize(new Dimension(FORM.FORM_WIDTH / 10, FORM.TEXT_FIELD_HIGHTH));
-		textLabelClass.setPreferredSize(new Dimension(FORM.FORM_WIDTH / 10, FORM.TEXT_FIELD_HIGHTH));
-		textLabelOnclick.setPreferredSize(new Dimension(FORM.FORM_WIDTH / 10, FORM.TEXT_FIELD_HIGHTH));
-		textLabelText.setPreferredSize(new Dimension(FORM.FORM_WIDTH / 10, FORM.TEXT_FIELD_HIGHTH));
-		textLabelValue.setPreferredSize(new Dimension(FORM.FORM_WIDTH / 10, FORM.TEXT_FIELD_HIGHTH));
-		textLabelHref.setPreferredSize(new Dimension(FORM.FORM_WIDTH / 10, FORM.TEXT_FIELD_HIGHTH));
-		textLabelTagName.setPreferredSize(new Dimension(FORM.FORM_WIDTH / 10, FORM.TEXT_FIELD_HIGHTH));
-		textLabelUrl.setPreferredSize(new Dimension(FORM.FORM_WIDTH / 10, FORM.TEXT_FIELD_HIGHTH));
+		textLabelTitle.setPreferredSize(new Dimension(FORM.FORM_WIDTH / 8, FORM.TEXT_FIELD_HIGHTH));
+		textLabelId.setPreferredSize(new Dimension(FORM.FORM_WIDTH / 8, FORM.TEXT_FIELD_HIGHTH));
+		textLabelName.setPreferredSize(new Dimension(FORM.FORM_WIDTH / 8, FORM.TEXT_FIELD_HIGHTH));
+		textLabelXpath.setPreferredSize(new Dimension(FORM.FORM_WIDTH / 8, FORM.TEXT_FIELD_HIGHTH));
+		textLabelClass.setPreferredSize(new Dimension(FORM.FORM_WIDTH / 8, FORM.TEXT_FIELD_HIGHTH));
+		textLabelOnclick.setPreferredSize(new Dimension(FORM.FORM_WIDTH / 8, FORM.TEXT_FIELD_HIGHTH));
+		textLabelText.setPreferredSize(new Dimension(FORM.FORM_WIDTH / 8, FORM.TEXT_FIELD_HIGHTH));
+		textLabelValue.setPreferredSize(new Dimension(FORM.FORM_WIDTH / 8, FORM.TEXT_FIELD_HIGHTH));
+		textLabelHref.setPreferredSize(new Dimension(FORM.FORM_WIDTH / 8, FORM.TEXT_FIELD_HIGHTH));
+		textLabelTagName.setPreferredSize(new Dimension(FORM.FORM_WIDTH / 8, FORM.TEXT_FIELD_HIGHTH));
+		textLabelUrl.setPreferredSize(new Dimension(FORM.FORM_WIDTH / 8, FORM.TEXT_FIELD_HIGHTH));
 
 		textLabelTitle.setFont(FORM.TEXT_NORMAL_FONT);
 		textLabelId.setFont(FORM.TEXT_NORMAL_FONT);
@@ -117,7 +109,6 @@ public class DrawRecordPanel {
 		textLabelTagName.setFont(FORM.TEXT_NORMAL_FONT);
 		textLabelUrl.setFont(FORM.TEXT_NORMAL_FONT);
 
-		labelPanel.add(textLabelTitle, BorderLayout.NORTH);
 		labelPanel.add(textLabelId, BorderLayout.NORTH);
 		labelPanel.add(textLabelName, BorderLayout.NORTH);
 		labelPanel.add(textLabelXpath, BorderLayout.NORTH);
@@ -128,13 +119,14 @@ public class DrawRecordPanel {
 		labelPanel.add(textLabelHref, BorderLayout.NORTH);
 		labelPanel.add(textLabelTagName, BorderLayout.NORTH);
 		labelPanel.add(textLabelUrl, BorderLayout.NORTH);
+		labelPanel.add(textLabelTitle, BorderLayout.NORTH);
 
 		JPanel attrPanel = new JPanel();
 		attrPanel.setLayout(new GridLayout(11, 1));
 
-		currentWindow = new JTextField((FORM.TEXT_AREA_WIDTH) / 9);
-		currentWindow.setBackground(FORM.editBack);
-		currentWindow.setForeground(FORM.editFront);
+		windows = new JComboBox();
+		windows.setBackground(FORM.editBack);
+		windows.setForeground(FORM.editFront);
 		id = new JTextField((FORM.TEXT_AREA_WIDTH) / 9);
 		id.setBackground(FORM.editBack);
 		id.setForeground(FORM.editFront);
@@ -166,7 +158,7 @@ public class DrawRecordPanel {
 		currentURL.setBackground(FORM.editBack);
 		currentURL.setForeground(FORM.editFront);
 
-		currentWindow.setFont(FORM.TEXT_NORMAL_FONT);
+		windows.setFont(FORM.TEXT_NORMAL_FONT);
 		id.setFont(FORM.TEXT_NORMAL_FONT);
 		name.setFont(FORM.TEXT_NORMAL_FONT);
 		xpath.setFont(FORM.TEXT_NORMAL_FONT);
@@ -178,19 +170,18 @@ public class DrawRecordPanel {
 		tagName.setFont(FORM.TEXT_NORMAL_FONT);
 		currentURL.setFont(FORM.TEXT_NORMAL_FONT);
 
-		currentWindow.setPreferredSize(new Dimension(FORM.TEXT_AREA_WIDTH, FORM.TEXT_FIELD_HIGHTH));
-		id.setPreferredSize(new Dimension(FORM.TEXT_AREA_WIDTH, FORM.TEXT_FIELD_HIGHTH));
-		name.setPreferredSize(new Dimension(FORM.TEXT_AREA_WIDTH, FORM.TEXT_FIELD_HIGHTH));
-		xpath.setPreferredSize(new Dimension(FORM.TEXT_AREA_WIDTH, FORM.TEXT_FIELD_HIGHTH));
-		className.setPreferredSize(new Dimension(FORM.TEXT_AREA_WIDTH, FORM.TEXT_FIELD_HIGHTH));
-		onclick.setPreferredSize(new Dimension(FORM.TEXT_AREA_WIDTH, FORM.TEXT_FIELD_HIGHTH));
-		text.setPreferredSize(new Dimension(FORM.TEXT_AREA_WIDTH, FORM.TEXT_FIELD_HIGHTH));
-		value.setPreferredSize(new Dimension(FORM.TEXT_AREA_WIDTH, FORM.TEXT_FIELD_HIGHTH));
-		href.setPreferredSize(new Dimension(FORM.TEXT_AREA_WIDTH, FORM.TEXT_FIELD_HIGHTH));
-		tagName.setPreferredSize(new Dimension(FORM.TEXT_AREA_WIDTH, FORM.TEXT_FIELD_HIGHTH));
-		currentURL.setPreferredSize(new Dimension(FORM.TEXT_AREA_WIDTH, FORM.TEXT_FIELD_HIGHTH));
+		windows.setPreferredSize(new Dimension(FORM.TEXT_AREA_WIDTH / 2, FORM.TEXT_FIELD_HIGHTH));
+		id.setPreferredSize(new Dimension(FORM.TEXT_AREA_WIDTH / 2, FORM.TEXT_FIELD_HIGHTH));
+		name.setPreferredSize(new Dimension(FORM.TEXT_AREA_WIDTH / 2, FORM.TEXT_FIELD_HIGHTH));
+		xpath.setPreferredSize(new Dimension(FORM.TEXT_AREA_WIDTH / 2, FORM.TEXT_FIELD_HIGHTH));
+		className.setPreferredSize(new Dimension(FORM.TEXT_AREA_WIDTH / 2, FORM.TEXT_FIELD_HIGHTH));
+		onclick.setPreferredSize(new Dimension(FORM.TEXT_AREA_WIDTH / 2, FORM.TEXT_FIELD_HIGHTH));
+		text.setPreferredSize(new Dimension(FORM.TEXT_AREA_WIDTH / 2, FORM.TEXT_FIELD_HIGHTH));
+		value.setPreferredSize(new Dimension(FORM.TEXT_AREA_WIDTH / 2, FORM.TEXT_FIELD_HIGHTH));
+		href.setPreferredSize(new Dimension(FORM.TEXT_AREA_WIDTH / 2, FORM.TEXT_FIELD_HIGHTH));
+		tagName.setPreferredSize(new Dimension(FORM.TEXT_AREA_WIDTH / 2, FORM.TEXT_FIELD_HIGHTH));
+		currentURL.setPreferredSize(new Dimension(FORM.TEXT_AREA_WIDTH / 2, FORM.TEXT_FIELD_HIGHTH));
 
-		attrPanel.add(currentWindow);
 		attrPanel.add(id);
 		attrPanel.add(name);
 		attrPanel.add(xpath);
@@ -201,6 +192,7 @@ public class DrawRecordPanel {
 		attrPanel.add(href);
 		attrPanel.add(tagName);
 		attrPanel.add(currentURL);
+		attrPanel.add(windows);
 
 		JPanel objectPanel = new JPanel();
 		objectPanel.setLayout(new GridLayout(1, 2));
@@ -215,7 +207,7 @@ public class DrawRecordPanel {
 		dataPanel.setLayout(new GridLayout(1, 2));
 		dataPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 0, 0));
 
-		JLabel dataLabel = new JLabel("TestData Value:", SwingUtilities.RIGHT);
+		JLabel dataLabel = new JLabel("TestData:", SwingUtilities.RIGHT);
 		JLabel operLabel = new JLabel("Operations:", SwingUtilities.RIGHT);
 		dataLabel.setFont(FORM.TEXT_NORMAL_FONT);
 		operLabel.setFont(FORM.TEXT_NORMAL_FONT);
@@ -226,7 +218,7 @@ public class DrawRecordPanel {
 		userLabelPanel.add(operLabel);
 
 		dataValue = new JTextField((FORM.TEXT_AREA_WIDTH) / 9);
-		dataValue.setBackground(new Color(200, 230, 200));
+		dataValue.setBackground(FORM.editBack);
 		dataValue.setForeground(FORM.editFront);
 		dataValue.setFont(FORM.TEXT_NORMAL_FONT);
 		dataValue.getDocument().addDocumentListener(documentListener);
@@ -237,7 +229,7 @@ public class DrawRecordPanel {
 		operator = new JComboBox();
 		operator.setBackground(FORM.editBack);
 		operator.setForeground(FORM.editFront);
-		setCodeStyle(parser.getCodeMap().keySet());
+		setOperations(parser.getCodeMap().keySet());
 		operator.addItemListener(operatorChangedListener);
 		
 		findBy = new JComboBox();
@@ -268,44 +260,76 @@ public class DrawRecordPanel {
 		stepArea.setForeground(FORM.editFront);
 		stepArea.setBorder(BorderFactory.createLineBorder(Color.BLACK, 0));
 		JScrollPane scroller = new JScrollPane(stepArea);
-		scroller.setPreferredSize(new Dimension(FORM.TEXT_AREA_WIDTH, FORM.FORM_HIGHTH / 10));
+		int areaHighth = FORM.FORM_HIGHTH - FORM.GAP_HIGHTH * 5 - FORM.TEXT_FIELD_HIGHTH * 16 - buttonHighth * 2;
+		scroller.setPreferredSize(new Dimension(FORM.TEXT_AREA_WIDTH, areaHighth));
 		scroller.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
 		scroller.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		tAreaPanel.add(scroller);
 
-		JPanel buttomPanel = new JPanel();
-		JButton testButton = new JButton("Test/Run Current Step");
+		JPanel buttonPanel = new JPanel();
+		JPanel buttonPanel1 = new JPanel();
+		JPanel buttonPanel2 = new JPanel();
+		buttonPanel.setLayout(new GridLayout(1, 2));
+		buttonPanel1.setLayout(new GridLayout(2, 1));
+		buttonPanel2.setLayout(new GridLayout(2, 1));
+		buttonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, FORM.GAP_WIDTH, FORM.GAP_HIGHTH));
+
+		recordButton.addMouseMotionListener(mouseMotionListener);
+		switchButton.addMouseListener(selectNewWindowMouseListener);
 		testButton.addMouseListener(testMouseListener);
-		testButton.setFont(FORM.getButtonFont());
-		JButton addToSteps = new JButton("Save Current Step");
 		addToSteps.addMouseListener(stepRecordMouseListener);
+		
+		recordButton.setFont(FORM.getButtonFont());
+		switchButton.setFont(FORM.getButtonFont());
+		testButton.setFont(FORM.getButtonFont());
 		addToSteps.setFont(FORM.getButtonFont());
+		
+		recordButton.setPreferredSize(buttonSize);
+		switchButton.setPreferredSize(buttonSize);
 		testButton.setPreferredSize(buttonSize);
 		addToSteps.setPreferredSize(buttonSize);
 
-		buttomPanel.add(testButton);
-		buttomPanel.add(addToSteps);
+		buttonPanel1.add(recordButton);
+		buttonPanel1.add(switchButton);
+		buttonPanel2.add(testButton);
+		buttonPanel2.add(addToSteps);
+		buttonPanel.add(buttonPanel1);
+		buttonPanel.add(buttonPanel2);
 
-		topButtonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 0, 0));
 		objectPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 0, 0));
 		tAreaPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 0, 0));
-		buttomPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 0, 0));
+		buttonPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, 0, 0));
 
-		recordPanel.add(topButtonPanel);
 		recordPanel.add(objectPanel);
 		recordPanel.add(dataPanel);
+		recordPanel.add(buttonPanel);
 		recordPanel.add(tAreaPanel);
-		recordPanel.add(buttomPanel);
 
 		recordPanel.setPreferredSize(new Dimension(FORM.TEXT_AREA_WIDTH, FORM.FORM_HIGHTH));
 		recordPanel.setLayout(new FlowLayout(FlowLayout.RIGHT, FORM.GAP_WIDTH, FORM.GAP_HIGHTH));
 		recordPanel.setBorder(BorderFactory.createLineBorder(Color.GRAY, 2));
 	}
 	
-	public void setCodeStyle(Set<String> keySet){
+	public void setOperations(Set<String> keySet){
 		Iterator<String> it = keySet.iterator();
 		while(it.hasNext()){
 			operator.addItem(it.next());
+		}
+	}
+	
+	public void setWindows(ArrayList<String> items, String defaultHandle){
+		windows.removeAllItems();
+		Iterator<String> it = items.iterator();
+		String fitWindow = null;
+		while(it.hasNext()){
+			String window = it.next();
+			windows.addItem(window);
+			if (window.contains(defaultHandle)){
+				fitWindow = window;
+			}
+		}
+		if (fitWindow != null && !fitWindow.isEmpty()){
+			windows.setSelectedItem(fitWindow);
 		}
 	}
 
@@ -317,8 +341,8 @@ public class DrawRecordPanel {
 		return recordPanel;
 	}
 
-	public JTextField getCurrentWindow() {
-		return currentWindow;
+	public JComboBox getWindows() {
+		return windows;
 	}
 
 	public JTextField getCurrentURL() {

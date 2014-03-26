@@ -4,7 +4,6 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
-import java.awt.SystemColor;
 import java.awt.event.ItemListener;
 import java.awt.event.MouseListener;
 
@@ -18,7 +17,6 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingUtilities;
-
 import com.star.recorder.config.ConfigurationSupport;
 
 public class DrawStartPanel {

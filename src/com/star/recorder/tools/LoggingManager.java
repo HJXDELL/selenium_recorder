@@ -18,7 +18,7 @@ public class LoggingManager {
 	private String className;
 	private Properties property = new Properties();
 	private Logger logger = null;
-	private final String configSource = "/com/star/tools/log4j.properties";
+	private final String configSource = "/com/star/recorder/tools/log4j.properties";
 
 	/**
 	 * construct with set class name parameter.

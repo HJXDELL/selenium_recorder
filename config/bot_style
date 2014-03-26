@@ -3,6 +3,7 @@ click=click(By.%s("%s"));
 clickByJavaScript=clickByJavaScript(By.%s("%s"));
 selectFrame=selectFrame("%s");
 selectWindow=selectWindow("%s");
+closeWindow=closeWindow("%s");
 selectExistWindow=selectExistWindow();
 waitForElementVisible=waitForElementVisible(By.%s("%s"), "%s");
 selectDefaultContent=selectDefaultContent();

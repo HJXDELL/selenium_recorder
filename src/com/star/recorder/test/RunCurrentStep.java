@@ -1,20 +1,26 @@
 package com.star.recorder.test;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Set;
+
 import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.support.ui.Select;
 
 import com.star.bot.apis.WebDriverBotApis;
+import com.star.recorder.forms.DrawRecordPanel;
 import com.star.recorder.tools.LoggingManager;
 
 public class RunCurrentStep {
 	private final LoggingManager LOG = new LoggingManager(this.getClass().getName());
+	private final String splitChar = " - ";
+	private WebDriverBotApis bot;
 	private JComboBox operator;
 	private JComboBox findBy;
 	private JTextField id;
@@ -23,7 +29,7 @@ public class RunCurrentStep {
 	private JTextField className;
 	private JTextField text;
 	private JTextField dataValue;
-	private JTextField currentWindow;
+	private JComboBox windows;
 	private WebDriver driver;
 	private By by;
 
@@ -65,7 +71,9 @@ public class RunCurrentStep {
 			} else if (opt.contains("click")) {
 				driver.findElement(this.by).click();
 			} else if (opt.equalsIgnoreCase("selectWindow")) {
-				new WebDriverBotApis(driver).selectWindow(currentWindow.getText());
+				driver.switchTo().window(windows.getSelectedItem().toString().split(splitChar)[2]);
+			} else if (opt.equalsIgnoreCase("closeWindow")) {
+				driver.close();
 			} else if (opt.equalsIgnoreCase("chooseOKOnAlert")) {
 				driver.switchTo().alert().accept();
 			} else if (opt.equalsIgnoreCase("chooseCancelOnAlert")) {
@@ -125,11 +133,46 @@ public class RunCurrentStep {
 		this.dataValue = dataValue;
 	}
 
-	public void setCurrentWindow(JTextField currentWindow) {
-		this.currentWindow = currentWindow;
+	public void setWindows(JComboBox windows) {
+		this.windows = windows;
 	}
 
 	public void setDriver(WebDriver driver) {
 		this.driver = driver;
+		this.bot = new WebDriverBotApis(driver);
+	}
+	
+	public void setWindows(DrawRecordPanel record){		
+		ArrayList<String> items = new ArrayList<String>();
+		String defaultHandle = driver.getWindowHandle();
+		Set<String> handles = driver.getWindowHandles();
+		handles = bot.clearHandleCache(handles);
+		Iterator<String> it = handles.iterator();
+		int i = 1;
+		while(it.hasNext()){
+			String handle = it.next();
+			driver.switchTo().window(handle);
+			items.add(i + splitChar + driver.getTitle() + splitChar + handle);
+			i ++;
+		}
+		driver.switchTo().window(defaultHandle);
+		record.setWindows(items, defaultHandle);
+	}
+	
+	public void maximizeAllWindows(){
+		String defaultHandle = driver.getWindowHandle();
+		Set<String> handles = driver.getWindowHandles();
+		handles = bot.clearHandleCache(handles);
+		Iterator<String> it = handles.iterator();
+		while(it.hasNext()){
+			String handle = it.next();
+			driver.switchTo().window(handle);
+			try{
+				driver.manage().window().maximize();
+			}catch (Exception ex){
+				JOptionPane.showMessageDialog(new JPanel(), "Current Window Can Not Be Maximized!");
+			}
+		}
+		driver.switchTo().window(defaultHandle);		
 	}
 }

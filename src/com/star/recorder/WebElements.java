@@ -2,9 +2,9 @@ package com.star.recorder;
 
 public enum WebElements {
 
-	SCREEN_LOCATOR(" var offX,offY; offX = arguments[0] - window.screenLeft + document.documentElement.scrollLeft"),
+	SCREEN_LOCATOR(" var offX,offY; offX = arguments[0] - window.screenLeft"),
 
-	SCREEEN_OFFSET(";offY = arguments[1] - window.screenTop + document.documentElement.scrollTop"),
+	SCREEEN_OFFSET(";offY = arguments[1] - window.screenTop"),
 
 	ELEMENT_LOCATOR(";var element = document.elementFromPoint(offX, offY);"
 			+ "var s = 'id$$$' + element.getAttribute('id');s = s + '#%#name$$$' + element.getAttribute('name');"
