@@ -73,7 +73,7 @@ public class RecorderPerformer {
 	private final FormSettings FORM = new FormSettings();
 	private final RunCurrentStep run = new RunCurrentStep();
 	private final StringBufferUtils str = new StringBufferUtils();
-	private final String splitChar = " - ";
+	private final String splitChar = " ~ ";
 	private final String selectWindow = "selectWindow";
 	private LinkedHashMap<String, String> attrMap = new LinkedHashMap<String, String>();
 	private LinkedHashMap<String, String> jsMap;

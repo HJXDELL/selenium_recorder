@@ -1,1 +1,1 @@
-ant build -buildfile build.xml
+ant build -Dfile.encoding=UTF-8 -buildfile build.xml

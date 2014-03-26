@@ -19,7 +19,7 @@ import com.star.recorder.tools.LoggingManager;
 
 public class RunCurrentStep {
 	private final LoggingManager LOG = new LoggingManager(this.getClass().getName());
-	private final String splitChar = " - ";
+	private final String splitChar = " ~ ";
 	private WebDriverBotApis bot;
 	private JComboBox operator;
 	private JComboBox findBy;
