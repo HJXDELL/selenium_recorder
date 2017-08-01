@@ -14,12 +14,15 @@ public class SetChromeDriver implements DriverStartUp{
 	 */
 	private void chromeDriverSet() {
 		String _installed_p1 = System.getenv("LOCALAPPDATA");
-		String _installed_p2 = System.getenv("PROGRAMFILES");
-
+		String _installed_p2 = System.getenv("ProgramFiles");
+		String _installed_p3 = System.getenv("ProgramFiles(x86)");
+		
 		if (new File(_installed_p1 + chromeExe).exists()) {
 			System.setProperty("webdriver.chrome.bin", _installed_p1 + chromeExe);
 		} else if (new File(_installed_p2 + chromeExe).exists()) {
 			System.setProperty("webdriver.chrome.bin", _installed_p2 + chromeExe);
+		} else if (new File(_installed_p3 + chromeExe).exists()) {
+			System.setProperty("webdriver.chrome.bin", _installed_p3 + chromeExe);
 		} else {
 			throw new RuntimeException("Chrome was not installed correctly!");
 		}
