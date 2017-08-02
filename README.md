@@ -2,8 +2,7 @@ User Guide
 
 * To use this tool, you can use only Java to test your web applications under Selenium2/WebDriver. Maybe you can support python in this tool yourself.
 
-* Please checkout the project with encoding [UTF-8], otherwise you will get an ugly GUI in your desktop. Because the original project workspace was set to [UTF-8]. As known to us, different charsets take different length it the window.
- 
+* Please checkout the project with encoding [UTF-8], otherwise you will get an ugly GUI in your desktop. Because the original project workspace was set to [UTF-8]. As known to us, different charsets take different length it the window. 
   
 * Start to use this tool.
 	
