@@ -1,0 +1,11 @@
+sendKeys=driver.findElement(By.%s("%s")).sendKeys("%s");
+click=driver.findElement(By.%s("%s")).click();
+selectWindow=driver.switchTo().window("%s");
+closeWindow=driver.close();
+selectFrame=driver.switchTo().frame("%s");
+selectByIndex=new Select(driver.findElement(By.%s("%s"))).selectByIndex(%s);
+selectByValue=new Select(driver.findElement(By.%s("%s"))).selectByValue("%s");
+selectByVisibleText=new Select(driver.findElement(By.%s("%s"))).selectByVisibleText("%s");
+chooseOKOnAlert=driver.switchTo.alert.accept();
+chooseCancelOnAlert=driver.switchTo().alert.dismiss();
+selectDefaultContent=driver.switchTo().defaultContent();
